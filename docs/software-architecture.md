@@ -1,10 +1,10 @@
 # Software architecture
 
 ## Block diagram
-![Block diagram](photos/block-diagram.png)
+![Block diagram](../photos/block-diagram.png)
 
 ## Software architecture
-![Software architecture](photos/software-architecture.png)
+![Software architecture](../photos/software-architecture.png)
 
 ## Components
 ### Web UI

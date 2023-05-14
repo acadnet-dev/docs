@@ -1,7 +1,7 @@
 # User journey
 
 ## Diagram
-![User journey](photos/user-journey.png)
+![User journey](../photos/user-journey.png)
 
 ## Description
 The user is presented with a login screen. They can login with their Google account or other authenthication providers. The user can then explore problem sets and choose a problem they want to solve. They have to choose if they want to solve the problem locally or in an online VSCode workspace.
