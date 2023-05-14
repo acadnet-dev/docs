@@ -6,8 +6,8 @@
 ## Software architecture
 ![Software architecture](../photos/software-architecture.png)
 
-## Components
-### Web UI
+# Components
+## Web UI
 .NET 7 MVC app that serves the main web UI.
 
 Responsibilities:
@@ -20,7 +20,7 @@ Responsibilities:
 * Access to VSCode Workspace
 * Problem results viewing
 
-### PostgreSQL
+## PostgreSQL
 PostgreSQL database that stores all the structured data.
 
 Main entities stored:
@@ -29,11 +29,11 @@ Main entities stored:
 * Submissions
 * Stats
 
-### Checker
+## Checker
 TBD
 
-### Problems file storage
+## Problems file storage
 TBD
 
-### VSCode Workspaces
+## VSCode Workspaces
 TBD
