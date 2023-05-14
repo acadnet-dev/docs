@@ -9,5 +9,5 @@ To better understand the idea behind the project please start with the [user jou
 * [Software architecture](software-architecture.md) - describes the software architecture of the app
 
 
-## How to use this repo
+## How to edit the docs
 * To edit the diagrams you need to install this vscode extension: [Draw.io Integration](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio)
