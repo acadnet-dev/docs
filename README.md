@@ -6,6 +6,8 @@ To better understand the idea behind the project please start with the [user jou
 
 ## Diagrams
 * [User journey](photos/user-journey.png)
+* [Block diagram](photos/block-diagram.png)
+* [Software architecture](photos/software-architecture.png)
 
 
 ## How to use this repo
