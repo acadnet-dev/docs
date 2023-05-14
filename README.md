@@ -4,10 +4,9 @@ This repo is a starting point for writing my diploma thesis. It contains all the
 ## Project idea
 To better understand the idea behind the project please start with the [user journey](user-journey.md). You should also check the [software architecture](software-architecture.md) stack.
 
-## Diagrams
-* [User journey](photos/user-journey.png)
-* [Block diagram](photos/block-diagram.png)
-* [Software architecture](photos/software-architecture.png)
+## Docs
+* [User journey](user-journey.md) - describes the user journey through the app
+* [Software architecture](software-architecture.md) - describes the software architecture of the app
 
 
 ## How to use this repo
