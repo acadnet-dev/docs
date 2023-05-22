@@ -14,13 +14,16 @@ gantt
     title Timeline acadnet.dev
     axisFormat %d-%b
     section Dev
-    Problem struct + statement + example                :a1, 2023-05-22, 5d
-    Checker + upload submission page + results page     :after a1, 1w
+    Project startup                                     :done, a0, 2023-05-07, 15d
+    Problem struct + statement + example                :active, a1, 2023-05-22, 5d
+    Checker + upload submission page + results page     :a11, after a1, 1w
+    VSCode workspace for students                       :a12, after a11, 3d
+    VSCode extension for checking                       :a13, after a12, 5d
+    Add more problems + final checks                    :after a13, 1w
     section Ops
-    Setup CI/CD + deploy to DO                          :a2, 2023-06-01, 5d
+    Setup CI/CD + deploy to DO                          :a2, 2023-06-01, 1w
     section Documentation
-    Start writing docs                                  :a3, 2023-06-12, 2023-06-24
-    Final checks                                        :after a3, 2d
+    Write docs                                          :a3, 2023-06-12, 22d
 ```
 
 ## How to edit the docs
