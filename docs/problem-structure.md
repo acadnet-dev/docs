@@ -8,14 +8,10 @@ problem/
 ├─ README.md            * problem statement
 ├─ main.cpp             * main problem file
 ├─ solution_main.cpp    * main problem solution
-├─ tests/               * folder with tests
-│  ├─ in/               * input for each test
-│  │  ├─ test0.in
-│  │  ├─ test1.in
-│  │  ...
-│  ├─ ref/              * correct output for each test
-│  │  ├─ test0.ref
-│  │  ├─ test1.ref
-│  │  ...
-
+├─ test0.in             * test input
+├─ test1.in
+│  ...
+├─ test0.ref            * test reference
+├─ test1.ref
+│  ...
 ```
