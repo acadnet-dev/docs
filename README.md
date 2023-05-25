@@ -4,9 +4,16 @@ This repo is a starting point for writing my diploma thesis. It contains all the
 ## Project idea
 To better understand the idea behind the project please start with the [user journey](docs/user-journey.md). You should also check the [software architecture](docs/software-architecture.md) stack.
 
+## Problem listing and structure
+For listing the problems I have gone with a dynamic recursive structure of categories that can hold other categories or problems as children. Check the [problem hierarchy](docs/problem-hierarchy.md) for more details.
+
+For the problem structure I have went with a pre-defined standard, even though a dynamic one will be implemented for the final product. See the [problem structure](docs/problem-structure.md) doc.
+
 ## Docs
 * [User journey](docs/user-journey.md) - describes the user journey through the app
 * [Software architecture](docs/software-architecture.md) - describes the software architecture of the app
+* [Problem hierarchy](docs/problem-hierarchy.md) - describes the courses and problems layout
+* [Problem structure](docs/problem-structure.md) - describes a problem structure (files)
 
 ## Timeline
 ```mermaid
