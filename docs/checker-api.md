@@ -1,6 +1,6 @@
 # API description for the Checker
 
-## `/submission/create`
+## **POST** `/submission/create`
 #### Query parameters
 * `type` - the problem type (see below for available types)
 * `bucket` - the bucket where the problem files are
@@ -15,7 +15,7 @@ File as multipart/form-data (see below for file type based on problem type)
 }
 ```
 
-## `/submission/status`
+## **GET** `/submission/status`
 #### Query parameters
 * `submission_id` - the id of the submission
 
@@ -28,7 +28,7 @@ File as multipart/form-data (see below for file type based on problem type)
 ```
 
 # Callback
-The checker will call the configured callback url after checking a submission. The callback will receive a POST request with the following body:
+The checker will make a **POST** call the configured callback url after checking a submission. The callback will receive a POST request with the following body:
 ```json
 {
     "submission_id": "submission_id",
