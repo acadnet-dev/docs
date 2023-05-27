@@ -12,12 +12,16 @@ For the problem structure I have went with a pre-defined standard, even though a
 ## Checker
 The checker is written in Rust as a standalone endpoint. Here is the [API documentation](docs/checker-api.md)
 
+## So you want to create a problem?
+Check the [problem author](docs/problem-author.md) doc.
+
 ## Docs
 * [User journey](docs/user-journey.md) - describes the user journey through the app
 * [Software architecture](docs/software-architecture.md) - describes the software architecture of the app
 * [Problem hierarchy](docs/problem-hierarchy.md) - describes the courses and problems layout
 * [Problem structure](docs/problem-structure.md) - describes a problem structure (files)
 * [Checker API](docs/checker-api.md) - describes the API that the checkers exposes
+* [Problem author](docs/problem-author.md) - describes how to create a problem
 
 ## Timeline
 ```mermaid
