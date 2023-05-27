@@ -9,11 +9,15 @@ For listing the problems I have gone with a dynamic recursive structure of categ
 
 For the problem structure I have went with a pre-defined standard, even though a dynamic one will be implemented for the final product. See the [problem structure](docs/problem-structure.md) doc.
 
+## Checker
+The checker is written in Rust as a standalone endpoint. Here is the [API documentation](docs/checker-api.md)
+
 ## Docs
 * [User journey](docs/user-journey.md) - describes the user journey through the app
 * [Software architecture](docs/software-architecture.md) - describes the software architecture of the app
 * [Problem hierarchy](docs/problem-hierarchy.md) - describes the courses and problems layout
 * [Problem structure](docs/problem-structure.md) - describes a problem structure (files)
+* [Checker API](docs/checker-api.md) - describes the API that the checkers exposes
 
 ## Timeline
 ```mermaid
