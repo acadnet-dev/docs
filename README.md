@@ -10,7 +10,7 @@ For listing the problems I have gone with a dynamic recursive structure of categ
 For the problem structure I have went with a pre-defined standard, even though a dynamic one will be implemented for the final product. See the [problem structure](docs/problem-structure.md) doc.
 
 ## Checker
-The checker is written in Rust as a standalone endpoint. Here is the [checker documentation](docs/checker-api.md).
+The checker is written in Python as a standalone endpoint. Here is the [checker documentation](docs/checker-api.md).
 
 ## So you want to create a problem?
 Check the [problem author](docs/problem-author.md) doc.

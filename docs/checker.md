@@ -1,5 +1,5 @@
 # How does the checker work?
-The checker is written in Rust and has multiple components described below.
+The checker is written in Python and has multiple components described below.
 
 ## Checker architecture diagram
 ![Checker architecture diagram](../photos/checker-architecture.png)
