@@ -44,3 +44,4 @@ gantt
 
 ## How to edit the docs
 * To edit the diagrams you need to install this vscode extension: [Draw.io Integration](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio)
+* Install TeXLive and Latex Workshop vscode extension to edit the .tex files
