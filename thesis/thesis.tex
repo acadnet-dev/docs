@@ -135,7 +135,6 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 \newcommand{\dezvoltare}{\worktype{Dezvoltare de produs}}
 \newcommand{\cercetare}{\worktype{Cercetare}}
 \newcommand{\ambele}{\worktype{Ambele}}
-\newcommand{\website}{\href{https://acadnet.dev}{AcadNet.dev}}
 %%%
 
 
@@ -158,9 +157,9 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 %%
 %%   Campurile aferente rezumatului
 %%
-\newcommand{\AbstractRO}{Această lucrare prezintă \website, o platformă online pentru rezolvarea de probleme de informatică. Platforma oferă un mediu de lucru complet, care permite utilizatorilor să creeze probleme, să le rezolve și să le evalueze automat. Platforma oferă și un mediu de lucru online, care permite utilizatorilor să rezolve problemele direct în browser, fără a fi nevoie să instaleze un mediu de dezvoltare local.}
+\newcommand{\AbstractRO}{Această lucrare prezintă \href{https://acadnet.dev}{AcadNet.dev}, o platformă online pentru rezolvarea de probleme de informatică. Platforma oferă un mediu de lucru complet, care permite utilizatorilor să creeze probleme, să le rezolve și să le evalueze automat. Platforma oferă și un mediu de lucru online, care permite utilizatorilor să rezolve problemele direct în browser, fără a fi nevoie să configureze un mediu de dezvoltare local.}
 
-\newcommand{\AbstractEN}{This paper presents \website, an online platform for solving computer science problems. The platform provides a complete working environment, which allows users to create problems, solve them and automatically evaluate them. The platform also provides an online working environment, which allows users to solve problems directly in the browser, without the need to install a local development environment.}
+\newcommand{\AbstractEN}{This paper presents \href{https://acadnet.dev}{AcadNet.dev}, an online platform for solving programming problems. The platform offers a complete working environment, which allows users to create problems, solve them and automatically evaluate them. The platform also provides an online working environment, which allows users to solve problems directly in the browser, without the need to configure a local development environment.}
 
 %%
 %%   Campurile aferente paginii de multumiri
@@ -179,28 +178,46 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 
 \AbstractPage
 
-% poate fi comentata sau stearsa
-\ThanksPage
-
-
 % Textul licentei incepe de aici 
 
 
 % INRODUCTION
 \chapter{Introduction}\pagestyle{fancy}
-\section{Background and motivation}
+\section{Motivation and problem statement}
+For the past half year, I was responsible for coordinating the development of problems for the Software Interoperability section of the \href{https://acadnet.ro/}{National Olympiad of Applied Informatics - Acadnet}. This section is different than the regular informatics olympiad, as it focuses more on the engineering side of informatics, rather than the theoretical side. The problems are more practical and require students to be more creative in order to solve them.
 
-\section{Problem statement}
+The problems are formulated as real life scenarios, where a code is given that should have a certain behavior. Guess what, it doesn't. The students have to find bugs in the code and fix them.
+
+As of right now, there is no accessible methods for students to train for this olympiad. The only way to practice is to solve the problems from the previous years, by downloading their statement and original source. There are no tests to check if the solution is correct. The students have to compile and run the code themselves, and check if the output is correct.
+
+Our goal is to create an environment where students can train and prepare for the olympiad in a more efficient way. Moreover, we want to create an online workspace for students, where they can solve problems directly in the browser. This allows us to get more creative with the engineering problems, as we can use more programming languages and configurations, without putting the students through the hassle of setting up a local development environment.
 
 \section{Objectives}
+During the last half year, I have been gathering insights on what the students and authors want from a platform like this. I have also been researching the available technologies, and I have been experimenting with different approaches. Based on this, the objectives of this project are defined as follows.
+
+The objective of this project is to create a universal platform for solving engineering tasks. This should include the ability for authors to extend the platform and implement any new language that they want to write a problem in. In addition, the platform should give students the opportunity to solve the tasks directly in the browser, without requiring anything more than an account.
+In terms of functionality, the platform should allow authors to create problems, and students to solve them. The platform should also provide a way to automatically evaluate the solutions, and give feedback to the students.
+
+In terms of security, because the solutions will be evaluated by executing user-written code, the platform should be able to run the code in a sandboxed environment, and prevent malicious code from being executed. The platform should also prevent students from cheating, by not allowing them to see the test cases, other users submissions, or the source code of the solutions.
+
+The platform should be easily maintainable, and should be able to scale to a large number of users. It should use containerization to allow for easy deployment and scaling.
 
 \section{Proposed solution and achieved results}
+The core of the platform is a web application, which acts as the interface between the users and the platform. The web application is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application will also be a proxy for online workspaces.
 
+The web application is backed by a SQL database and an S3 file storage. The database is used to store the users, problems, submissions, and other metadata. The file storage is used to store the source code of the problems, and the submissions.
+
+The web application is written in C\# using the .NET Core framework. The database is a PostgreSQL database, and the file storage is an S3 compatible storage, provided by DigitalOcean. The web application is deployed using Helm Charts on a Kubernetes cluster, also provided by DigitalOcean. The checker is written in Python and it is more like an sandbox manager that spawns a new container for each submission, and runs the tests inside the container. Like the checker, the workspace manager is also written in Python, and it is responsible for spawning new workspaces. Workspaces are Docker images based on a Visual Studio Code fork, that allows us to run the code directly in the browser.
+
+The working platform can be found at \href{https://acadnet.dev}{AcadNet.dev} and the source code is available on Github inside the \href{https://github.com/acadnet-dev}{acadnet-dev} organization.
 
 
 % PROPOSED SOLUTION
 \chapter{System design and architecture}
 \section{User journey}
+Our user actors are the students and the authors. The students are the ones that solve the problems, and the authors are the ones that create the problems. 
+
+The students can browse the problems. In order to solve them, they have to create an account. They can choose to solve the problems directly in the browser, or they can download the source code and solve them locally. After they solve the problem, they can submit their solution for evaluation. The platform will automatically evaluate the solution, and give feedback to the them. 
 
 \section{Architecture overview}
 
@@ -254,6 +271,7 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 
 % TESTING AND VALIDATION
 \chapter{Testing and validation}
+Read in template.pdf
 \section{Evaluation criteria}
 
 \section{Performance}
