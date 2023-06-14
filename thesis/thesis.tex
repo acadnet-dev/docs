@@ -137,7 +137,7 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 \newcommand{\ambele}{\worktype{Ambele}}
 %%%
 
-
+\addtocontents{toc}{\protect\thispagestyle{empty}}
 %%
 %%   Campurile de mai jos trebuie modificate de autor. Modificati doar continutul, nu si numele fiecarei definitii
 %%
@@ -186,11 +186,11 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 \section{Motivation and problem statement}
 For the past half year, I was responsible for coordinating the development of problems for the Software Interoperability section of the \href{https://acadnet.ro/}{National Olympiad of Applied Informatics - Acadnet}. This section is different than the regular informatics olympiad, as it focuses more on the engineering side of informatics, rather than the theoretical side. The problems are more practical and require students to be more creative in order to solve them.
 
-The problems are formulated as real life scenarios, where a code is given that should have a certain behavior. Guess what, it doesn't. The students have to find bugs in the code and fix them.
+The problems are formulated as real life scenarios, where a code is given that should have a certain behavior, but it does not. The students have to find bugs in the code and fix them.
 
 As of right now, there is no accessible methods for students to train for this olympiad. The only way to practice is to solve the problems from the previous years, by downloading their statement and original source. There are no tests to check if the solution is correct. The students have to compile and run the code themselves, and check if the output is correct.
 
-Our goal is to create an environment where students can train and prepare for the olympiad in a more efficient way. Moreover, we want to create an online workspace for students, where they can solve problems directly in the browser. This allows us to get more creative with the engineering problems, as we can use more programming languages and configurations, without putting the students through the hassle of setting up a local development environment.
+The platform's goal is to create an environment where students can train and prepare for the olympiad in a more efficient way. Moreover, we want to create an online workspace for students, where they can solve problems directly in the browser. This allows us to get more creative with the engineering problems, as we can use more programming languages and configurations, without putting the students through the hassle of setting up a local development environment.
 
 \section{Objectives}
 During the last half year, I have been gathering insights on what the students and authors want from a platform like this. I have also been researching the available technologies, and I have been experimenting with different approaches. Based on this, the objectives of this project are defined as follows.
@@ -215,16 +215,57 @@ The working platform can be found at \href{https://acadnet.dev}{AcadNet.dev} and
 % PROPOSED SOLUTION
 \chapter{System design and architecture}
 \section{User journey}
-Our user actors are the students and the authors. The students are the ones that solve the problems, and the authors are the ones that create the problems. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../photos/user-journey.png}
+	\caption{User journey}
+	\label{fig:user-journey}
+\end{figure}
 
-The students can browse the problems. In order to solve them, they have to create an account. They can choose to solve the problems directly in the browser, or they can download the source code and solve them locally. After they solve the problem, they can submit their solution for evaluation. The platform will automatically evaluate the solution, and give feedback to the them. 
+The platform's main actors are the users that want to learn and practice programming, by solving the problems available. The students can browse the problems, but in order to solve them, they have to create an account. After that, they can choose to solve the problems directly in the browser or they can download the source code and solve them locally. After they solve the problem, they can submit their solution for evaluation. The platform will automatically evaluate the solution, and give feedback to the them.
+
+The other actors are the authors, who are responsible for creating the problems. The authors can create problems, and upload relevant files for the problem. These files include the statement, the source code of the problem, the test cases, and the solution.
 
 \section{Architecture overview}
+The architecture is composed of 3 main components: the web application, the checker, and the VSCode workspaces. The web application is the main component, and it is responsible for managing the users, problems, submissions, and for evaluating the submissions. The checker is responsible for evaluating the submissions, and the VSCode workspaces are used to allow users to solve the problems directly in the browser. The block diagram of the architecture can be seen in the figure below.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../photos/block-diagram.png}
+	\caption{Software block diagram}
+	\label{fig:software-architecture}
+\end{figure}
+
+\begin{table}[th]\small\linespread{1}
+\caption{Component's responsibilities}
+\label{tab:criterii}
+\begin{tabular}{l >{\raggedright\arraybackslash}p{10cm} >{\raggedright\arraybackslash}p{0cm}}
+\textbf{Component} & \textbf{Responsibilities} \\\hline
+\textbf{Web App} & Manage users, problems and submissions; send submissions to the checker and present results; manage VSCode workspaces & \\
+\hline
+\textbf{Checker} & Test submissions by spawning a new sandbox in the K8s cluster and compare reference outputs with actual outputs & \\
+\hline
+\textbf{VSCode workspace} & Allow users to solve problems directly in the browser & \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
 \section{System components and interactions}
+The web app is the brain of the platform. It is interacting with all the other components. With regards to the checker, the web app is responsible for receiving the submissions from the user or from the online workspace and to send them to the checker. While the checker is evaluating the submission, the web app constantly polls the checker for the updates and results. When the checker is done, the web app will receive the results and will update the submission with the status. On the other hand, when it comes to the interaction with the online workspaces, the web app is responsible for spawning new workspaces via the workspace manager and it acts as a HTTP and websocket proxy between the user's browser and the workspace.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../photos/software-architecture.png}
+	\caption{System components and their interactions}
+	\label{fig:system-components}
+\end{figure}
+
+\subsection{SQL and file storage}
+Other than the 3 main components, the architecture also includes a SQL database and an S3 file storage. The database is used to store the users, problems, submissions, and other metadata. The file storage is used to store the source code of the problems, and the submissions. The interactions between the components can be seen in the figure below. The web application is the only component that interacts with the database. With the file storage, the web application and the checker interact with it. The web application uses it to store the files uploaded by the authors, and the checker uses it to pull the test cases for the problem.
+
 
 \section{Database design}
-
 
 
 % IMPLEMENTATION DETAILS
