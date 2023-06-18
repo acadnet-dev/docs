@@ -160,6 +160,8 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 }
 
 
+% Github Logo
+\usepackage{fontawesome}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 %%
@@ -353,7 +355,7 @@ The problems are organized in a tree-like structure. As the root there are the c
 \chapter{Implementation details}
 All the code for the platform and all its components is available on Github inside the \href{https://github.com/acadnet-dev}{acadnet-dev} organization.
 
-\section{Web application}
+\section{Web application \href{https://github.com/acadnet-dev/web}{\faicon{github} Repository}}
 The web application is the main component of the platform. It is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application acts as a proxy for the online workspaces. The web application is written in C\# using the .NET Core framework. It is using the MVC (Model-View-Controller) pattern, and it is using an ORM (Object Relational Mapper) called Entity Framework to interact with the database. The web application is deployed as a Docker image using multi-stage builds. The Docker image is deployed on a Kubernetes cluster using Helm Charts. The web application is composed of multiple components, which are described below.
 
 \subsection{Controllers}
@@ -452,7 +454,7 @@ For example, for the C++ problems, the files are uploaded with the following nam
 	\item \textbf{...}
 \end{itemize}
 
-\section{Checker}
+\section{Checker \href{https://github.com/acadnet-dev/checker}{\faicon{github} Repository}}
 The checker is the component of the platform that handles the evaluation of the submissions. It is written in Python and it is exposed as a simple REST API. The checker is deployed as a Docker image on the Kubernetes cluster. The checker is composed of multiple components, which are described below.
 
 \subsection{API}
@@ -461,8 +463,6 @@ The API is built using the \href{https://fastapi.tiangolo.com/}{FastAPI} framewo
 The API endpoints are described below.
 
 \textbf{POST /submission/create}
-
-% TODO: describe the request and response
 \begin{description}
 	\item[Query parameters]\
 		\begin{itemize}
@@ -532,36 +532,197 @@ The submission factory is responsible for creating the submission object, based 
 \subsection{Global status object}
 All the submissions are run in a background thread. The status is a global object that is updated by the sandbox adapter as it progresses through the workflow. When the API receives a request for the status of a submission, it returns the status object.
 
-\section{Sandbox image}
+\section{Sandbox image \href{https://github.com/acadnet-dev/sandbox-cpp}{\faicon{github} Repository}}
+All the sandbox images are running a Python FastAPI server that is used by the sandbox adapter to communicate with the sandbox.
+Each sandbox image is created specifically for each problem type. Currently, the only sandbox image available is for C++ problems.
+The image is based on the \href{https://hub.docker.com/_/gcc}{GCC Docker image} and has Python installed and all the dependencies for the FastAPI server.
+Then the image is pushed to the Docker registry and it is deployed on the Kubernetes cluster via the sandbox adapter.
 
-\section{VSCode workspaces manager}
-3
+The endpoints of the FastAPI server are described below.
 
-\section{VSCode online image}
+\textbf{POST /upload\_file}
+\begin{description}
+	\item[Request body]\
+		\begin{itemize}
+			\item \textbf{file} - the file to be uploaded. all the files are uploaded in the same directory
+		\end{itemize}
+	\item[Response status]\
+		\begin{itemize}
+			\item \textbf{200} - the file was uploaded successfully
+			\item \textbf{other} - an error occurred
+		\end{itemize}
+\end{description}
 
-\section{VSCode checker extension}
+
+\textbf{POST /run}\\
+This endpoint is used to run commands on the sandbox and get the output. For example, it is used to run the build command and to run the tests.
+\begin{description}
+	\item[Request body]\
+		\begin{itemize}
+			\item \textbf{cmd} - the command to be run inside the sandbox
+		\end{itemize}
+	\item[Response body]\
+		\begin{itemize}
+			\item \textbf{stdout} - the standard output of the command
+			\item \textbf{stderr} - the standard error of the command
+			\item \textbf{returncode} - the return code of the command
+		\end{itemize}
+\end{description}
+
+\newpage
+\section{VSCode workspaces manager \href{https://github.com/acadnet-dev/workspaces}{\faicon{github} Repository}}
+The VSCode workspaces manager is a component that is responsible for spawning new workspaces. It is written in Python and it is exposed as a simple REST API. The workspaces manager is deployed as a Docker image on the Kubernetes cluster. This manager is very similar to the checker, but it is much simpler. A workspace is unique for each user and problem.
+
+It is responsible for receiving the request for a new workspace from the web application, and for spawning a new workspace container on the Kubernetes cluster. The workspace container is a Docker image based on a Visual Studio Code fork that allows us to run VS Code directly in the browser.
+
+The workflow of creating a new workspace is described below.
+\begin{enumerate}
+	\item The users requests a new workspace from the web application by clicking a button.
+	\item The web application creates the workspace object in the database and sends a request to the workspaces manager.
+	\item The workspaces manager checks if the workspace already exists. If it does, it returns the internal IP of the workspace pod.
+	\item If the workspace does not exist, the workspaces manager creates a new workspace pod on the Kubernetes cluster.
+	\item The workspaces manager copies the necessary files to the workspace pod.
+	\item The workspaces manager returns the internal IP of the workspace pod.
+	\item The web application proxies the user's browser to the workspace pod.
+\end{enumerate}
+
+The endpoints of the workspaces manager are described below.
+
+\textbf{POST /workspace/create}
+\begin{description}
+	\item[Request body]\
+		\begin{itemize}
+			\item \textbf{id} - the id of the workspace
+			\item \textbf{problem\_name} - the name of the problem
+			\item \textbf{files} - the files that need to be copied to the workspace
+		\end{itemize}
+	\item[Response body]\
+		\begin{itemize}
+			\item \textbf{endpoint} - the internal IP of the workspace pod
+		\end{itemize}
+\end{description}
+
+\textbf{POST /workspace/get}
+\begin{description}
+	\item[Request body]\
+		\begin{itemize}
+			\item \textbf{id} - the id of the workspace
+		\end{itemize}
+	\item[Response body]\
+		\begin{itemize}
+			\item \textbf{endpoint} - the internal IP of the workspace pod
+		\end{itemize}
+\end{description}
+
+\section{VSCode online image \href{https://github.com/acadnet-dev/vscode-server}{\faicon{github} Repository}}
+As mentioned above, the workspace image is a web server that serves Visual Studio Code in the browser via HTTP requests and web sockets. The image is based on a fork of Visual Studio Code called \href{https://github.com/gitpod-io/openvscode-server}{Gitpod OpenVSCode Server} that allows us to run VS Code in the browser. The image is pushed to the Docker registry and it is deployed on the Kubernetes cluster via the workspaces manager.
+
+The platform has its own fork of the Gitpod OpenVSCode Server, because we needed to make some changes to the code to make it work with our platform, like adding the checker extension. The fork can be seen here \href{https://github.com/acadnet-dev/vscode-server}{acadnet-dev/vscode-server}.
+
+\section{VSCode checker extension \href{https://github.com/acadnet-dev/vscode-checker-extension}{\faicon{github} Repository}}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/checker-extension.png}
+	\caption{Checker extension example}
+	\label{fig:checker-extension}
+\end{figure}
+
+The chceker extension is a custom made extension for Visual Studio Code that is created specifically to be run in the browser. It is written in TypeScript and it is composed of a frontend and a backend. The backend is responsible for communicating with the checker and the frontend is responsible for displaying the results to the user. The frontend is a sidebar panel that is displayed when the user clicks the extension's icon. The extension is written using the \href{https://code.visualstudio.com/api}{VS Code Extension API}. The backend uses fetch API to communicate with the web app for submitting solutions for the problem and polling for the results. The frontend uses plain HTML, JS and CSS to display the results.
+
+The extension is installed compiled as a `.vsix' file and served as a \href{https://github.com/acadnet-dev/vscode-checker-extension/releases}{Github Release} in the repository. The workspace image pulls the extension and installs it. The extension is automatically enabled when the workspace is created.
 
 
 % FEATURES AND FUNCTIONALITIES
 \chapter{Features and functionalities}
-\section{User authentication}
-1
+\section{Main page}
+The main page is the first page that the user sees when accessing the platform. It is a simple page that contains an incentive for the user to create an account and a list of the available courses. 
 
-\section{Problem creation}
-1
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=300px]{./pics/front-page.png}
+	\caption{Main page}
+	\label{fig:main-page}
+\end{figure}
+
+\section{User authentication}
+The users can register and log in using their Google account. This is done via the Google OAuth2 authentication provider.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=300px]{./pics/login.png}
+	\caption{Login page}
+	\label{fig:login-page}
+\end{figure}
 
 \section{Problem browsing}
-1
+As a student, the user can browse the problems by course and category.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/course.png}
+	\caption{Course list}
+	\label{fig:course}
+\end{figure}
+
+After selecting a course, the user can see the categories and problems in each category. In the figure below, the problems in category '9-10' are shown.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/problem-list.png}
+	\caption{Problem list}
+	\label{fig:problem-list}
+\end{figure}
+
+\newpage
+\section{Problem creation}
+A problem can be created only by course maintainers. After the problem is created, its status is 'Incomplete' until the author uploads the necessary files and the solution passes all the tests. After that, the problem's status is 'Ready' and it can be solved by the students.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/empty-problem.png}
+	\caption{Problem editing}
+	\label{fig:problem-editing}
+\end{figure}
+
+This is how a maintainer sees the problems in a category. In the figure below, we can see that the problem 'intersectie' is 'Ready' and the problem 'decisional' is 'Incomplete' in the category '9-10'.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/maintainer-problem-list.png}
+	\caption{Maintainer problem list}
+	\label{fig:maintainer-problem-list}
+\end{figure}
+
+\newpage
 \section{Problem solving}
-1
+When a user chooses a problem to solve, he is shown the page in Figure \ref{fig:problem-solving}. The page contains the problem's statement, a button to download the sources, a file uploader for the solution and a button to luanch the online workspace. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/solve.png}
+	\caption{Problem solving}
+	\label{fig:problem-solving}
+\end{figure}
 
 \section{Submission evaluation}
-1
+The user can evaluate the submission directly in the problem solving page. He can upload the solution and see the status of the submission. In the figure below, we can see the process of submitting a solution.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=300px]{./pics/submission-status.png}
+	\caption{Submission status}
+	\label{fig:submission-status}
+\end{figure}
 
 \section{Online workspaces}
-1
+The user can launch an online workspace directly from the problem solving page. The workspace is a Visual Studio Code instance that is running in the browser. The user can edit the source code of the solution and run it directly in the browser. The workspace is preconfigured with the necessary files and extensions for the problem.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{./pics/online-workspace.png}
+	\caption{Online workspace}
+	\label{fig:online-workspace}
+\end{figure}
 
 
 % DEPLOYMENT AND MAINTENANCE
@@ -608,65 +769,6 @@ Read in template.pdf
 \section{Lessons learned}
 1
 
-
-% BIBLIOGRAPHY
-\chapter*{Bibliography}\addcontentsline{toc}{chapter}{Bibliography}  
-% * <marios.choudary@gmail.com> 2018-02-28T12:07:48.730Z:
-% 
-% > BIBLIOGRAFIE
-% Am adaugat un paragraf cu cateva detalii despre folosirea citarilor bibliografice in Latex, despre folosirea lui "\cite" si despre posibilitatea folosirii bibliografiei si direct in fisierul Latex.
-% 
-% ^.
-
-\begin{itemize}
-	\item 	NU utilizați referințe la Wikipedia sau alte surse fără autor asumat.
-	\item 	Pentru referințe la articole relevante accesibile în web (descrise prin URL) se va nota la bibliografie și data accesării.
-	\item 	Mai multe detalii despre citarea referințelor din internet se pot regăsi la:
-	\begin{itemize}
-		\item	\url{http://www.writinghelp-central.com/apa-citation-internet.html}
-		\item	\url{http://www.webliminal.com/search/search-web13.html}
-	\end{itemize}
-	\item 	Note de subsol se utilizează dacă referiți un link mai puțin semnificativ o singură dată; Dacă nota este citată de mai multe ori, atunci utilizați o referință bibliografică.
-	\item 	Dacă o imagine este introdusă în text și nu este realizată de către autorul lucrării, trebuie citată sursa ei (ca notă de subsol sau referință - este de preferat utilizarea unei note de subsol).
-	\item 	Referințele se pun direct legate de text (de exemplu ``KVM [1] uses'', ``as stated by Popescu and Ionescu [12]'', etc.). Nu este recomandat să folosiți formulări de tipul ``[1] uses'', ``as stated in [12]'', ``as described in [11]'' etc..
-	\item 	Afirmațiile de forma ``are numerous'', ``have grown exponentially'', ``are among the most used'', ``are an important topic'' trebuie să fie acoperite cu citări, date concrete si analize comparative.
-	\begin{itemize}
-		\item	Mai ales în capitolele de introducere, ``state of the art'', ``related work'' sau ``background'' trebuie să vă argumentați afirmațiile prin citări. Fiți autocritici și gândiți-vă dacă afirmațiile au nevoie de citări, chiar și cele pe care le considerați evidente.
-		\item	Cea mai mare parte dintre citări vor fi în capitolele de introducere ``state of the art'', ``related work'' sau ``background''.
-	\end{itemize}
-	\item 	Toate intrările bibliografice trebuie citate în text. Nu le adăugați pur și simplu la final.
-	\item 	Nu copiați sau traduceți niciodată din surse de informație de orice tip (online, offline, cărți, etc.). Dacă totuși doriți să oferiți, prin excepție, un citat celebru - de maxim 1 frază- utilizați ghilimele și evident menționați sursa. .
-	\item 	Dacă reformulați idei sau creați un paragraf rezumat al unor idei folosind cuvintele voastre, precizați cu citare (referință bibliografică) sau cu notă de subsol sursa sau sursele de unde ați preluat ideile.
-\end{itemize}
-
-Trebuie respectat un singur standard de trimiteri bibliografice (citare), dintre următoarele alternative:
-\begin{itemize}
-	\item APA (\url{http://pitt.libguides.com/c.php?g=12108\&p=64730})
-	\item IEEE (\url{https://ieee-dataport.org/sites/default/files/analysis/27/IEEE\%20Citation\%20Guidelines.pdf}) 
-	\item Harvard (\url{https://libweb.anglia.ac.uk/referencing/harvard.htm})
-	\item Cu numerotarea referințelor în ordine alfabetică sau în ordinea apariției în text (de exemplu, stilul cu numere folosit de unele publicații ACM - \url{https://www.acm.org/publications/authors/reference-formatting}) 
-\end{itemize}
-
-În Latex este foarte ușor să folosiți referințe într-un mod corect și unitar, fie prin adăugarea unei secțiuni
-\verb!\begin{thebibliography}!
-(vezi la sfârșitul acestei secțiuni), fie printr-un fișier separat de tip bib, folosind comanda
-\verb!\bibliography{}!,
-așa cum procedăm mai jos prin folosirea fișierului ``bibliography.bib''. În orice caz, în Latex va trebui să folosiți comanda
-\verb!\cite{}!
-pentru a adăuga referințe, iar această comandă trebuie folosită direct în text, acolo unde vreți sa apară citația, ca în exemplele următoare:
-\begin{itemize}
-	\item Articol jurnal: ~\cite{article};
-	\item Articol conferință:~\cite{proc};
-	\item Carte: ~\cite{book};
-	\item Weblink: ~\cite{silva};
-\end{itemize}
-
-\textbf{Important}: în această secțiune de obicei apar doar intrările bibliografice (adică doar listarea referințelor). Citarea lor prin comanda cite și explicații legate de ele trebuie facute în secțiunile anterioare. Citarea de mai sus a fost facută aici doar pentru exemplificare.
-
-% Asa se specifica folosirea unui fisier cu referinte bibliografice:
-\bibliographystyle{plain}
-\bibliography{bibliography}
-
 %% O alta varianta ar fi fost includerea de articole direct in acest fisier
 %% in felul urmator:
 %% \begin{thebibliography}{ABC}
@@ -696,8 +798,7 @@ pentru a adăuga referințe, iar această comandă trebuie folosită direct în 
 	"submission_id": "330f946d-95d0-45da-bffd-a45996045ba1",
 	"status": "finished",
 	"build_status": "success",
-	"test_results": [
-		{
+	"test_results": [{
 			"test_name": "test01.in",
 			"passed": false,
 			"status": "failed",
@@ -707,52 +808,40 @@ pentru a adăuga referințe, iar această comandă trebuie folosită direct în 
 			}
 		}
 	],
-	"status_history": [
-		{
+	"status_history": [{
 			"status": "created",
 			"timestamp": 1686422831.5370035
-		},
-		{
+		},{
 			"status": "creating sandbox",
 			"timestamp": 1686422831.5370176
-		},
-		{
+		},{
 			"status": "pod created with name sandbox-cpp-5d8720e1-c042-43ea-a95a-e8e268c6f0be",
 			"timestamp": 1686422831.570527
-		},
-		{
+		},{
 			"status": "waiting for sandbox to start - pod status: Pending",
 			"timestamp": 1686422836.5834553
-		},
-		{
+		},{
 			"status": "sandbox launched",
 			"timestamp": 1686422836.6700737
-		},
-		{
+		},{
 			"status": "uploading submission file",
 			"timestamp": 1686422836.6700778
-		},
-		{
+		},{
 			"status": "compiling submission",
 			"timestamp": 1686422836.685021
-		},
-		{
+		},{
 			"status": "uploading test test01.in",
 			"timestamp": 1686422840.5165641
-		},
-		{
+		},{
 			"status": "running test test01.in",
 			"timestamp": 1686422840.5247858
-		},
-		{
+		},{
 			"status": "comparing output for test test01.in",
 			"timestamp": 1686422840.5364146
-		},
-		{
+		},{
 			"status": "finished",
 			"timestamp": 1686422852.6135993
-		}
-	]
+		}]
 }
 \end{lstlisting}
 
