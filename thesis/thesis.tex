@@ -255,6 +255,7 @@ The working platform can be found at \href{https://acadnet.dev}{AcadNet.dev} and
 % PROPOSED SOLUTION
 \chapter{System design and architecture}
 \section{User journey}
+\label{user-journey}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{../photos/user-journey.png}
@@ -321,6 +322,7 @@ Below is a description of each table and its purpose.
 
 \newpage
 \subsection{Users and roles}
+\label{users-and-roles}
 \begin{itemize}
 	\item \textbf{AspNetUsers} - stores the users that have an account on the platform. The users can be either students or authors.
 	\item \textbf{AspNetRoles} - stores the roles available on the platform. Currentyl, there are only 2 roles: student and author.
@@ -353,6 +355,7 @@ The problems are organized in a tree-like structure. As the root there are the c
 
 % IMPLEMENTATION DETAILS
 \chapter{Implementation details}
+\label{implementation-details}
 All the code for the platform and all its components is available on Github inside the \href{https://github.com/acadnet-dev}{acadnet-dev} organization.
 
 \section{Web application \href{https://github.com/acadnet-dev/web}{\faicon{github} Repository}}
@@ -728,63 +731,182 @@ The user can launch an online workspace directly from the problem solving page. 
 % DEPLOYMENT AND MAINTENANCE
 \chapter{Deployment and maintenance}
 \section{Infrastructure}
-3
+\subsection{Kubernetes cluster}
+The entire platform was created with the idea of being scalable and responsive. The platform is deployed on a Kubernetes cluster managed by DigitalOcean. The cluster is composed of multiple Droplets\protect\footnotemark{}. DigitalOcean provides automatic horizontal scaling for the cluster, which means that the cluster can automatically add or remove nodes based on the load. The platform is configured to have a pool of a minimum of 2 Droplets at any time and a maximum of 5. The cluster is also configured to automatically restart the pods if they crash. This way, the platform is always available and responsive.
+\footnotetext{A Droplet is a virtual machine on DigitalOcean}
+
+A droplet has 2 vCPUs, 2GB RAM and 60GB SSD. The cluster is configured to automatically add new nodes if the CPU usage is above 70\% for more than 5 minutes. 
+
+On the cluster, the following components are deployed.
+
+\begin{itemize}
+	\item \textbf{Web application} - the web application is deployed as a Docker image using multi-stage builds. The Docker image is deployed on the cluster using Helm Charts in an ArgoCD application.
+	\item \textbf{Checker} - the checker is deployed as a Docker image. The Docker image is deployed on the cluster using Helm Charts in an ArgoCD application.
+	\item \textbf{Workspaces manager} - the workspaces manager is deployed as a Docker image. The Docker image is deployed on the cluster using Helm Charts in an ArgoCD application.
+	\item \textbf{Checker Sandboxes} - dynamic Pods that are created by the checker to evaluate the submissions. The Pods are created using the Kubernetes Python client.
+	\item \textbf{VSCode Server} - dynamic Pods that are created by the workspaces manager to create the online workspaces. The Pods are created using the Kubernetes Python client.
+\end{itemize}
+
+\subsection{PostgreSQL}
+The PostgreSQL database is deployed as a managed service on DigitalOcean Databases. The database is configured to automatically restart if it crashes and to automatically backup the data. The database is configured on a Digitalocean VPC (Virtual Private Cloud) so that it can be accessed only from the Kubernetes cluster. This way, the database is not exposed to the internet and it is more secure.
+
+\subsection{File storage}
+The storage used for the files is a managed service provided by DigitalOcean called Spaces. This S3 compatible storage organizes the files in buckets as objects. Like the database, the storage is configured on a Digitalocean VPC (Virtual Private Cloud) so that it can be accessed only from the Kubernetes cluster. This way, the storage is not exposed to the internet and it is more secure.
+
 
 \section{Continuous integration}
-2
+All the components described in Chapter \ref{implementation-details} are built and tested using Github Actions. All the components, are built as Docker images and pushed to Github Container Registry. The Docker images are tagged with the commit hash and with the latest tag.
+
+The building process is mostly the same for all the components. The only difference is the 'Dockerfile' used to build the image, because each component runs on its own environment. The building process is described below.
+
+\begin{enumerate}
+	\item Checkout the repository
+	\item Login to Github Container Registry
+	\item Replace variables in JSON configuration files with environment variables stored in Github Secrets
+	\item Build the Docker image with layer caching
+	\item Push the Docker image to Github Container Registry
+\end{enumerate}
+
+The Github Action is ran on every push to the main branch and on every pull request to the main branch.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=200px]{./pics/github-actions-workflows.png}
+	\caption{Example of Github Actions workflows}
+	\label{fig:github-actions-workflows}
+\end{figure}
+
+\section{ArgoCD}
+ArgoCD is a tool that allows us to deploy Kubernetes manifests from a Git repository. It is used to deploy the Helm Charts for the web application, the checker, and the workspaces manager. The manifests are stored in the \href{https://github.com/acadnet-dev/infra}{acadnet-dev/infra} repository. The manifests are deployed automatically when a new commit is pushed to the repository, because ArgoCD is polling the repository for changes every 3 minutes.
+
 
 \section{Continuous deployment}
-2
+All the components described in Chapter \ref{implementation-details} are deployed on the Kubernetes cluster using Helm Charts. The Helm Charts are deployed using ArgoCD. The deployment is done automatically at the end of the Github Actions build process. The deployment process is done by updating the image version in the ArgoCD deployment using the ArgoCD API.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=400px]{./pics/argocd-apps.png}
+	\caption{Applications deployed with ArgoCD}
+	\label{fig:argocd-apps}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=400px]{./pics/argocd-web.png}
+	\caption{Web application deployment}
+	\label{fig:argocd-web}
+\end{figure}
+
+\newpage
 \section{Monitoring}
-1
+Like any software application, monitoring is a very important aspect of the platform. Because of the complexity of the platform, it is difficult to monitor all applications individually. As just a little effort was put into monitoring, the platform is currently monitored only at a high level. When looking at the performance and resource usage, the monitoring is done using DigitalOcean's monitoring service. This service provides a dashboard with the CPU, memory and disk usage of the Droplets. The dashboard can be seen in Figure \ref{fig:monitoring-dashboard}. In terms of logging, the logs can be seen in a centralized place in ArgoCD. The logs are collected from the Kubernetes cluster and displayed in each application's dashboard like in Figure \ref{fig:argocd-logs}.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=400px]{./pics/monitoring-dashboard.png}
+	\caption{Monitoring dashboard}
+	\label{fig:monitoring-dashboard}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=400px]{./pics/argocd-logs.png}
+	\caption{Logs for the checker}
+	\label{fig:argocd-logs}
+\end{figure}
 
 
 % TESTING AND VALIDATION
 \chapter{Testing and validation}
-Read in template.pdf
-\section{Evaluation criteria}
-1
+\section{Submission evaluation fairness}
+An important aspect of submission evaluation is fairness. The platform needs to be fair to all the users. This means that the submission evaluation performance and results should be the same for all the users. This thing should be achieved under any load, for any hardware and for any number of users. This is a very difficult thing to achieve, because the platform is running on a Kubernetes cluster, which means that the pods are running on different nodes and the nodes have different hardware. The Kubernetes cluster is also configured to automatically scale the number of nodes based on the load, which means that the pods can be moved from one node to another at any time. This means that the pods can run on different hardware at any time.
 
-\section{Performance}
-1
+To address this, the platform implements the following things.
+
+\textbf{Same hardware for all the nodes}
+All the nodes in the cluster are configured to have the same hardware. This means that all the pods will run on the same hardware, even if it is virutalized.
+
+\textbf{Resource limits for sandbox deployments}
+The sandbox deployments are configured to have resource limits and requests. This means that the pods will have the same amount of CPU and memory available, or the submission will not start and the cluster will need to scale up.
+
+\textbf{Submissions ran separately}
+The submissions are ran separately, which means that the pods will not interfere with each other. This means that the pods will not have to share the CPU and memory with other pods.
+
+\textbf{Hand-crafted tests}
+Authors are instructed to create tests that are not easily influenced by hardware resource fluctuations. For example, by limiting submission execution time and memory usage, we do not test the performance of the code, but the complexity of the algorithm. This way, the difference in performance between different complexities will be so big that it will not be influenced by the unpredictability of the hardware.
+
+
+\section{Performance and scalability}
+The platform is designed to be scalable and responsive. This means that the platform should be able to handle a large number of users and submissions. Being deployed on a Kubernetes cluster in a cloud environment, the platform can automatically scale up by spinning up new nodes. This comes with the downside of having unpredictable costs, because the number of nodes can change at any time.
+
+The only problem is that spinning a new node takes a few minutes, which means that the user will have to wait a few minutes for the submission to start or for the workspace to open. Because of this, the platform is configured to have at least a free node (buffer node) at any time. This way, the user will not have to wait for the node to spin up. When this buffer node is used, the cluster will automatically spin up a new node.
 
 \section{Security}
-1
+\textbf{Networking}
+The platform is deployed on a DigitalOcean VPC (Virtual Private Cloud). This means that the cluster is not exposed to the internet and it is more secure. The only thing that is exposed to the internet is the web application, which is exposed via a load balancer. The load balancer is configured to only allow traffic on port 80 and 443. The applications are talking between them using their internal IP addresses and ports.
 
-\section{User feedback}
-2
+\textbf{Certificates}
+All the exposed endpoints are secured with SSL certificates. The certificates are automatically generated and renewed by Let's Encrypt. The certificates are automatically renewed every 3 months.
 
+\textbf{Authentication}
+The users can authenticate using their Google account. This is done via the Google OAuth2 authentication provider. This way, the platform does not store any passwords and does not manage forgotten passwords.
+
+\textbf{Authorization}
+The platform has authorization based on user roles. The two roles are for authors and students. All the access is based on the user's journey. Each role's journey is described in Chapter \ref{user-journey}.
+
+\section{Platform testing}
+For testing purposes, the platform has already 6 problems uploaded. These problems are from the 2023 edition of the National Olympiad of Applied Informatics Acadnet. The problems statements are in Romanian and they are implemented using the only developed problem type, C++.
+
+The platform was tested by multiple users. The users were asked to create an account and solve a problem, by uploading the solution and by solving directly in the online workspace. The users were asked to give feedback about the platform. The feedback was mostly positive. The users liked the platform and they found it easy to use. The users also found some bugs and suggested some improvements. The bugs were fixed and the improvements were implemented.
 
 
 % CONCLUSIONS AND FUTURE WORK
 \chapter{Conclusions and future work}
 \section{Conclusions}
-1
+The platform is a success as it is easy to use and it is scalable. All the planned objectives were achieved. \href{https://acadnet.dev}{AcadNet.dev} will be hosted with the main purpose of being used by highschool students to learn programming and to prepare for the National Olympiad of Applied Informatics.
+
+On the techincal side, there were multiple challanges, starting from selecting which technologies to use and ending with the deployment and maintenance of the platform. Interconnecting all the components was also a challange, because the platform is composed of multiple components written in different technologies. One more thing that was a challange was debugging the Kubernetes pod manager that the checker and the workspace manager use to launch pods on the cluster, because it could be only tested in the production environment.
 
 \section{Future enhancements}
-1
+\textbf{More problem types}
+The platform can be extended to support more problem types. Currently, the only supported problem type is C++. The platform can be extended to support other languages like Java, Python, C\#, etc. As it is open-source and it is easy to extend, the platform can be extended by any author that wants to create problems for the platform.
+
+\textbf{Automatical removal of workspaces}
+The workspaces are currently removed manually by the maintainer. The platform can be extended to automatically remove the workspaces after a period of inactivity. This way resources will be saved and the costs will be reduced.
+
+\textbf{Persistent workspaces}
+The workspaces are currently not persistent. This means that the user will lose all the changes made to the workspace after the workspace is shut down. The platform can be extended to support persistent workspaces. This way, the user will be able to save the workspace and continue working on it later.
+
+\textbf{Contests}
+The platform can be extended to support contests. This way, the platform can be used to organize contests for highschool students. The contests can be organized by the teachers and the students can participate in the contests. This includes a contest component that allows the teachers to create contests and to add existing problems to the contests. The contests can be open or private. The private contests can be accessed only by the students that are enrolled in the course. There should be a leaderboard and a monitoring component that allows the teachers to see the progress of the students during the contest.
+
+\textbf{Private test results}
+Currently the test results are public. This means that the students can see the test results. Maybe the students should not see the test results, because they can use the test results to cheat. The platform can be extended to support private test results.
+
+\textbf{Execution time and memory usage limits}
+Currently, the submissions are not limited in terms of execution time and memory usage. This means that the submissions can run for as long as they want and they can use as much memory as they want. This can be a problem because the submissions can run for a long time and they can use a lot of memory. The platform can be extended to support execution time and memory usage limits. Also, this limit can be used by authors to create tests that check the complexity of the algorithm.
 
 \section{Lessons learned}
-1
+Developing a complex project like this one requires a lot of planning. Unfortunately, I only created a bird's eye view of the project and I did not plan the implementation in detail. This led to a lot of research and to a lot of time spent before actually starting the implementation. This also led to a lot of changes in the implementation, because I did not know exactly what I wanted to implement. 
+
+Another thing that I learned is that it is very important to have a clear vision of the project. This way, the project can be implemented in a consistent way. This is very important when working with other people, because it is very important to have a consistent code style and to have a consistent architecture. This way, the code is easier to read and to understand by other people.
+
+The last thing that I think had a big impact on writing this thesis is the during the implementation, I created multiple diagrams and I wrote a lot of documentation du. This documentation can be found in the \href{https://github.com/acadnet-dev/docs}{acadnet-dev/docs} repository, together with the diagrams. This documentation helped me a lot when writing this thesis, because I did not have to remember why I implemented the things the way I did. I just had to read the documentation and the diagrams and I remembered everything.
+
+Overall, I think that this project was a success and I learned a lot of things from it. I learned a lot of things about the technologies used, how to design the architecture and how to automate the deployment.
+
 
 %% O alta varianta ar fi fost includerea de articole direct in acest fisier
 %% in felul urmator:
-%% \begin{thebibliography}{ABC}
-%%
-%% \bibitem{article}
-%%  H. Baali, H. Djelouat, A. Amira and F. Bensaali,
-%%  ``Empowering Technology Enabled Care Using IoT and Smart Devices:
+% \begin{thebibliography}{ABC}
+
+% \bibitem{article}
+%  H. Baali, H. Djelouat, A. Amira and F. Bensaali,
+%  ``Empowering Technology Enabled Care Using IoT and Smart Devices:
 %   A Review''. In: IEEE Sensors Journal, vol. 322 (10), pp. 891--921, 1905.
-%%
-%% (more \bibitem items here...)
-%%
-%% \end{thebibliography}
 
-%% Daca vreti ca o sectiune sa inceapa pe o pagina noua, puteti forta acest lucru cu comanda "\newpage", ca mai jos:
+% \end{thebibliography}
 
-%\newpage
 
 \chapter*{Appendices}\addcontentsline{toc}{chapter}{Appendices}
 \begin{appendices}
