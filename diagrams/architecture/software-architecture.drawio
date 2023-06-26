@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="3-SPbE_dGS2LmkEGGgtY" name="Page-1">
-        <mxGraphModel dx="1294" dy="778" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="761" dy="608" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -40,9 +40,6 @@
                 <mxCell id="6" value="Checker" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;" parent="1" vertex="1">
                     <mxGeometry x="240" y="610" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" value="Persistent user workspace" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="690" y="440" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="10" value="VSCode workspaces" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fontSize=16;" parent="1" vertex="1">
                     <mxGeometry x="690" y="380" width="120" height="60" as="geometry"/>
                 </mxCell>
@@ -71,10 +68,10 @@
                         <mxPoint x="-30" y="7" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="29" value="Store users, problems" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" vertex="1" connectable="0" parent="1">
+                <mxCell id="29" value="Store users, problems" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="320" y="398" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="and submissions" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" vertex="1" connectable="0" parent="1">
+                <mxCell id="30" value="and submissions" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="330" y="420" as="geometry"/>
                 </mxCell>
             </root>

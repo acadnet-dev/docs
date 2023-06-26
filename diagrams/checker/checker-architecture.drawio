@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="MyT0cGw5b0G6OrqQlNBr" name="Page-1">
-        <mxGraphModel dx="1294" dy="513" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="761" dy="551" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,10 +10,10 @@
                 <mxCell id="3" value="Checker architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=19;fontStyle=1" parent="1" vertex="1">
                     <mxGeometry x="340" y="340" width="300" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="Web API" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="4" value="Web API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
                     <mxGeometry x="260" y="660" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="Problems&lt;br&gt;File storage" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="5" value="Problems&lt;br&gt;File storage" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
                     <mxGeometry x="590" y="660" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="9" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="6" target="4" edge="1">
@@ -46,16 +46,16 @@
                         <mxPoint x="10" y="-9" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="6" value="Checker" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="6" value="Checker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
                     <mxGeometry x="430" y="530" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="13" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="230" y="390" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="14" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="14" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="370" y="390" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="15" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="15" value="Sandbox C/C++&lt;br&gt;Runner" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="590" y="390" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="16" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;" parent="1" vertex="1">

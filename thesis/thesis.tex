@@ -163,6 +163,10 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 % Github Logo
 \usepackage{fontawesome}
 
+% hyphenation
+\hyphenation{PostgreSQL}
+\hyphenation{DigitalOcean}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 %%
 %%          End of template definitions
@@ -228,9 +232,9 @@ For the past half year, I was responsible for coordinating the development of pr
 
 The problems are formulated as real life scenarios, where a code is given that should have a certain behavior, but it does not. The students have to find bugs in the code and fix them.
 
-As of right now, there is no accessible methods for students to train for this olympiad. The only way to practice is to solve the problems from the previous years, by downloading their statement and original source. There are no tests to check if the solution is correct. The students have to compile and run the code themselves, and check if the output is correct.
+As of right now, there is no accessible methods for students to train for this olympiad. The only way for practicing is to solve the problems from the previous years, by downloading their statement and original source. There are no tests to check if the solution is correct. The students have to compile and run the code themselves, and check if the output is correct.
 
-The platform's goal is to create an environment where students can train and prepare for the olympiad in a more efficient way. Moreover, we want to create an online workspace for students, where they can solve problems directly in the browser. This allows us to get more creative with the engineering problems, as we can use more programming languages and configurations, without putting the students through the hassle of setting up a local development environment.
+The platform's goal is to create an environment where students can train and prepare for the olympiad in a more efficient way. Moreover, we want to create an online workspace for students, where they can solve the problems directly in the browser. This allows us to get more creative with the engineering problems, as we can use more programming languages and configurations, without putting the students through the hassle of setting up a local development environment.
 
 \section{Objectives}
 During the last half year, I have been gathering insights on what the students and authors want from a platform like this. I have also been researching the available technologies, and I have been experimenting with different approaches. Based on this, the objectives of this project are defined as follows.
@@ -238,16 +242,16 @@ During the last half year, I have been gathering insights on what the students a
 The objective of this project is to create a universal platform for solving engineering tasks. This should include the ability for authors to extend the platform and implement any new language that they want to write a problem in. In addition, the platform should give students the opportunity to solve the tasks directly in the browser, without requiring anything more than an account.
 In terms of functionality, the platform should allow authors to create problems, and students to solve them. The platform should also provide a way to automatically evaluate the solutions, and give feedback to the students.
 
-In terms of security, because the solutions will be evaluated by executing user-written code, the platform should be able to run the code in a sandboxed environment, and prevent malicious code from being executed. The platform should also prevent students from cheating, by not allowing them to see the test cases, other users submissions, or the source code of the solutions.
+In terms of security, because the solutions will be evaluated by executing user-written code, the platform should be able to run the code in a sandboxed environment and prevent malicious code from being executed. The platform should also prevent students from cheating, by not allowing them to see the test cases, other users submissions, or the source code of the solutions.
 
 The platform should be easily maintainable, and should be able to scale to a large number of users. It should use containerization to allow for easy deployment and scaling.
 
 \section{Proposed solution and achieved results}
-The core of the platform is a web application, which acts as the interface between the users and the platform. The web application is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application will also be a proxy for online workspaces.
+The core of the platform is a web application, which acts as the interface between the users and the platform. The web application is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application will also be a reverse proxy for online workspaces.
 
 The web application is backed by a SQL database and an S3 file storage. The database is used to store the users, problems, submissions, and other metadata. The file storage is used to store the source code of the problems, and the submissions.
 
-The web application is written in C\# using the .NET Core framework. The database is a PostgreSQL database, and the file storage is an S3 compatible storage, provided by DigitalOcean. The web application is deployed using Helm Charts on a Kubernetes cluster, also provided by DigitalOcean. The checker is written in Python and it is more like an sandbox manager that spawns a new container for each submission, and runs the tests inside the container. Like the checker, the workspace manager is also written in Python, and it is responsible for spawning new workspaces. Workspaces are Docker images based on a Visual Studio Code fork, that allows us to run the code directly in the browser.
+The web application is written in C\# using the .NET Core framework. The database is a PostgreSQL database, and the file storage is an S3 compatible storage, provided by DigitalOcean. The web application is deployed using Helm Charts on a Kubernetes cluster, also provided by DigitalOcean. The checker is written in Python and it acts as a sandbox manager that spawns a new container for each submission, and runs the tests inside the container. Like the checker, the workspace manager is also written in Python, and it is responsible for spawning new workspaces. Workspaces are Docker images based on a Visual Studio Code fork, that allows us to run the code directly in the browser.
 
 The working platform can be found at \href{https://acadnet.dev}{AcadNet.dev} and the source code is open-source and available on Github inside the \href{https://github.com/acadnet-dev}{acadnet-dev} organization.
 
@@ -303,11 +307,11 @@ The web app is the brain of the platform. It is interacting with all the other c
 \end{figure}
 
 \subsection{SQL and file storage}
-Other than the 3 main components, the architecture also includes a SQL database and an S3 file storage. The database is used to store the users, problems, submissions, and other metadata. The file storage is used to store the source code of the problems, and the submissions. The interactions between the components can be seen in the figure below. The web application is the only component that interacts with the database. With the file storage, the web application and the checker interact with it. The web application uses it to store the files uploaded by the authors, and the checker uses it to pull the test cases for the problem.
+Other than the 3 main components, the architecture also includes a SQL database and an S3 file storage. The database is used to store the users, problems, submissions, and other metadata. The file storage is used to store the source code of the problems, and the submissions. The interactions between the components can be seen in Figure \ref{fig:system-components}. The web application is the only component that interacts with the database. The web application and the checker are the only components to interact with the file storage. The web application uses it to store the files uploaded by the authors, and the checker uses it to pull the test cases for the problem.
 
 
 \section{Database design}
-The database is designed using an ORM (Object Relational Mapper) called Entity Framework. This allows us to define the database schema using C\# classes, and because we are using a "code first" approach, the database tables and relations will be created automatically, using migrations. The database schema can be seen in the figure below. 
+The database is designed using an ORM (Object Relational Mapper) called Entity Framework. This allows us to define the database schema using C\# classes, and because we are using a "code first" approach, the database tables and relations are created automatically, using migrations. The database schema can be seen in the figure below. 
 
 \begin{figure}[h]
 	\centering
@@ -325,12 +329,12 @@ Below is a description of each table and its purpose.
 \label{users-and-roles}
 \begin{itemize}
 	\item \textbf{AspNetUsers} - stores the users that have an account on the platform. The users can be either students or authors.
-	\item \textbf{AspNetRoles} - stores the roles available on the platform. Currentyl, there are only 2 roles: student and author.
-	\item \textbf{AspNetUserRoles} - because the realtion between users and roles is many to many, this table is used to store what roles each user has.
+	\item \textbf{AspNetRoles} - stores the roles available on the platform; currently, there are only 2 roles: student and author.
+	\item \textbf{AspNetUserRoles} - because the relation between users and roles is many to many, this table is needed to store what roles each user has.
 \end{itemize}
 
 \subsection{Problem hierarchy}
-The problems are organized in a tree-like structure. As the root there are the courses that have a name and a description. Each course have multiple categories, and each category can have as children other categories or problems. An example of the hierarchycal structure is shown in Figure \ref{fig:problem-hierarchy}.
+The problems are organized in a tree-like structure. As the root there are the courses that have a name and a description. Each course has multiple categories, and each category can have as children other categories or problems. An example of the hierarchycal structure is shown in Figure \ref{fig:problem-hierarchy}.
 
 \begin{figure}[h]
 	\centering
@@ -341,16 +345,16 @@ The problems are organized in a tree-like structure. As the root there are the c
 
 \begin{itemize}
 	\item \textbf{Courses} - stores the courses available on the platform.
-	\item \textbf{CourseUser} - a course can have maintainers. This table stores the relation between the courses and the users that are maintainers.
-	\item \textbf{Categories} - stores the categories available on the platform. Each category have a course and may have a parent category.
-	\item \textbf{Problems} - stores the problems available on the platform. Each problem have a category. Also, the problem stores the bucket id of the file storage where the problem's files are stored.
+	\item \textbf{CourseUser} - a course can have maintainers; this table stores the relation between the courses and the users that are maintainers.
+	\item \textbf{Categories} - stores the categories available on the platform; each category has a course and may have a parent category.
+	\item \textbf{Problems} - stores the problems available on the platform; each problem belongs to a category. Also, the problem stores the bucket id of the file storage where the problem's files are stored.
 \end{itemize}
 
 \subsection{Submissions and workspaces}
 
 \begin{itemize}
-	\item \textbf{Submissions} - stores the submissions made by the users. Each submission have a problem and a user.
-	\item \textbf{Workspaces} - stores the workspaces available on the platform. Each workspace have a problem and a user.
+	\item \textbf{Submissions} - stores the submissions made by the users; each submission has a problem and a user.
+	\item \textbf{Workspaces} - stores the workspaces available on the platform; each workspace has a problem and a user.
 \end{itemize}
 
 % IMPLEMENTATION DETAILS
@@ -359,10 +363,10 @@ The problems are organized in a tree-like structure. As the root there are the c
 All the code for the platform and all its components is available on Github inside the \href{https://github.com/acadnet-dev}{acadnet-dev} organization.
 
 \section{Web application \href{https://github.com/acadnet-dev/web}{\faicon{github} Repository}}
-The web application is the main component of the platform. It is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application acts as a proxy for the online workspaces. The web application is written in C\# using the .NET Core framework. It is using the MVC (Model-View-Controller) pattern, and it is using an ORM (Object Relational Mapper) called Entity Framework to interact with the database. The web application is deployed as a Docker image using multi-stage builds. The Docker image is deployed on a Kubernetes cluster using Helm Charts. The web application is composed of multiple components, which are described below.
+The web application is the main component of the platform. It is responsible for managing the users, problems, submissions, and for evaluating the submissions. In addition to this, the web application acts as a reverse proxy for the online workspaces. The web application is written in C\# using the .NET Core framework. It is using the MVC (Model-View-Controller) pattern, and it is using an ORM (Object Relational Mapper) called Entity Framework to interact with the database. The web application is deployed as a Docker image using multi-stage builds. The Docker image is deployed on a Kubernetes cluster using Helm Charts. The web application is composed of multiple components, which are described below.
 
 \subsection{Controllers}
-The controllers are the components that handle the HTTP requests. They receive a request from the user, process it by calling different services and interacting with other components so that it returns a response. The platform has multiple controller, each acting in its own domain. The controllers are described below.
+The controllers are the components that handle the HTTP requests. They receive a request from the user and process it by calling different services and interacting with other components so that it returns a response. The platform has multiple controllers, each acting in its own domain. The controllers are described below.
 
 \textbf{AuthController}
 It handles all the actions related to user authentication and authorization. It is responsible for registering new users, logging in existing users, and managing the user's roles.
@@ -370,10 +374,11 @@ It handles all the actions related to user authentication and authorization. It 
 Registering users and logging in users is done via external authentication providers. Currently, the platform only supports Google authentication, but it can be easily extended to support other providers. Support for other popular external providers is already implemented in the .NET framework.
 
 \textbf{CoursesController}
-It handles all the actions related to courses like creating new courses. This action can be done only by users that have the author role. It also handles creating categories and listing the hierarchycal structure of the courses so that users can browse them.
+It handles all the actions related to courses like creating new courses. This action can be done only by users that have the author role. It also handles creating categories and listing the hierarchycal structure of the courses and categories so that users can browse them.
 
+\newpage
 \textbf{ProblemsController}
-This controllers controls all the actions related to problems. It handles creating new problems, showing the problem's statement, and evaluating the submissions. Problems can only be created if the user created the respective course and is a maintainer of the course.
+This controller handles creating new problems, showing the problem's statement, and evaluating the submissions. Problems can only be created if the user is a maintainer of the course.
 
 Submitting a solution is done by uploading a file with the solution's source code. The file is sent to the checker. There is also a `GET` endpoint that returns the submission's status. This endpoint is called periodically by the frontend to check if the submission is done.
 
@@ -394,21 +399,21 @@ The file upload input is a custom component that is using the \href{https://pqin
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=250px]{./pics/file-uploader.png}
+	\includegraphics[width=230px]{./pics/file-uploader.png}
 	\caption{File upload component}
 	\label{fig:file-upload}
 \end{figure}
 
 \newpage
 \subsection{Services}
-The services are the components that handle the business logic of the platform. They are used by the controllers to process the requests. They are responsible for interacting with the database and the file storage. Services are a pair made of an interface describing the available methods, and a class implementing the interface. Services are using a dependency injection mechanism to be injected into the controllers and other services. The functionality of each service is described below.
+The services are the components that handle the business logic of the platform. They are used by the controllers to process requests. They are responsible for interacting with the database and the file storage. Services are a pair made of an interface describing the available methods and a class implementing the interface. Services are using a dependency injection mechanism to be injected into the controllers and other services. The functionality of each service is described below.
 
 \textbf{FileService}
 This service is responsible for interacting with the file storage. It is used to create buckets\protect\footnotemark{} and upload and download files from the file storage.
 \footnotetext{A bucket is a collection of files in an S3 compatible storage}
 
 \textbf{ProblemService}
-This service handles all the actions regarding problems. It is implemented using the Factory design pattern, because the problems can be written in different languages and have different methods of evaluation and initialization. Currently, the platform implements only one type of problem with one file source code of C++ and tests that are based on finding differences between the reference output and the actual output. But it can be easily extended to support other types of problems, written in other languages, and with other methods of evaluation like asserting the execution time or the memory usage.
+This service handles all the actions regarding problems. It is implemented using the Factory Pattern, because the problems can be written in different languages and have different methods of evaluation and initialization. Currently, the platform implements only one type of problem with one file source code of C++ and tests that are based on finding differences between the reference output and the actual output. But it can be easily extended to support other types of problems, written in other languages, and with other methods of evaluation like asserting the execution time or the memory usage.
 
 Some of the methods that needs to be implemented for each type of problem are described below.
 
@@ -426,10 +431,10 @@ Some of the methods that needs to be implemented for each type of problem are de
 This service is responsible for interacting with the checker. It is used to create submissions and to get the status of a submission.
 
 \textbf{WorkspaceService}
-This service is responsible for interacting with the workspace manager. It is used to create workspaces and to get the url of a workspace for the proxy redirect.
+This service is responsible for interacting with the workspace manager. It is used to create workspaces and to get the URL of a workspace for the reverse proxy.
 
 \subsection{Workspaces Proxy} \label{workspaces-proxy}
-The workspaces proxy is a component that acts as an intermediate between the user's browser and the workspace. It is responsible for receiving user requests for the workspace and redirecting them to the appropriate workspace container. It also handles the websocket connections between the user's browser and the workspace container.
+The workspaces reverse proxy is a component that acts as an intermediate between the user's browser and the workspace. It is responsible for receiving user requests for the workspace and redirecting them to the appropriate workspace container. It also handles the websocket connections between the user's browser and the workspace container.
 
 The proxy is written as a middleware in .NET Core and it is part of the web application. Because of this, it is very easy to check if the user is authenticated and authorized to access the workspace, because the authentication cookies are already in the user's browser and are transmitted with each request. 
 
@@ -439,12 +444,12 @@ The SQL database is a PostgreSQL database. It is deployed as a managed service o
 Each modification to the database schema is handled by migrations. Migrations are C\# classes that describe the changes that need to be made to the database schema. The migrations are created automatically by the ORM, and they are applied automatically when the application starts. This allows for easy modifications on the database schema without having to manually create the tables and relations.
 
 \section{File storage}
-The platform needs a distributed storage method for the files uploaded by the authors and the submissions made by the users. An S3 compatible storage is a good solution for this, because it is easy to use and it is scalable. For this project, when developing we are running a local S3 compatible storage using \href{https://min.io/}{MinIO}. For production, we are using a managed S3 compatible storage provided by DigitalOcean called \href{https://www.digitalocean.com/products/spaces/}{Spaces}.
+The platform needs a distributed storage method for the files uploaded by the authors and the submissions made by the users. An S3 compatible storage is a good solution for this, because it is easy to use and it is scalable. For this project, when developing, we are running a local S3 compatible storage using \href{https://min.io/}{MinIO}. For production, we are using a managed S3 compatible storage provided by DigitalOcean called \href{https://www.digitalocean.com/products/spaces/}{Spaces}.
 
-The storage is accessed using Amazon's S3 C\# SDK. The SDK is used to create buckets, upload and download files, and list files in a bucket. The buckets are created automatically by the web application when a new problem is created. The bucket's name is a UUID. The files are uploaded with specific names, defined by the problem type.
+The storage is accessed using Amazon's S3 C\# SDK. The SDK is used to create buckets, upload and download files, and list files in a bucket. The buckets are created automatically by the web application when a new problem is created. The bucket's name is a UUID and the files are uploaded with specific names, defined by the problem type.
 
 \newpage
-For example, for the C++ problems, the files are uploaded with the following names.
+For example, for the C++ problems, the files uploaded need to have to respect this naming convention:
 
 \begin{itemize}
 	\item \textbf{main.cpp} - the source code of the problem
@@ -461,7 +466,7 @@ For example, for the C++ problems, the files are uploaded with the following nam
 The checker is the component of the platform that handles the evaluation of the submissions. It is written in Python and it is exposed as a simple REST API. The checker is deployed as a Docker image on the Kubernetes cluster. The checker is composed of multiple components, which are described below.
 
 \subsection{API}
-The API is built using the \href{https://fastapi.tiangolo.com/}{FastAPI} framework. It is a simple REST API that exposes 2 endpoints: one for creating a new submission, and one for getting the status of a submission. The API is responsible for receiving the submission from the web application, and for sending the results back to the web application.
+The API is built using the \href{https://fastapi.tiangolo.com/}{FastAPI} framework. It is a simple REST API that exposes 2 endpoints: one for creating a new submission, and one for getting the status of a submission. The API is responsible for receiving the submission from the web application and for sending the results back to the web application.
 
 The API endpoints are described below.
 
@@ -498,7 +503,7 @@ The API endpoints are described below.
 An example of a submission status for a C++ problem can be seen in the appendix \ref{anexa:cod:json-submission}. Important things to be noted are the presence of the compilation status, the expected and actual results for each test case and all the logs from the sandbox.
 
 \subsection{Sandbox adapter}
-The purpose of the sandbox adapter is to communicate with the Kubernetes cluster and with the Sandbox itself, for things like creating the sandbox, uploading files to the sandbox, running commands inside the sandbox or purging the sandbox after the submission is evaluated.
+The purpose of the sandbox adapter is to communicate with the Kubernetes cluster and with the sandbox itself, for things like creating the sandbox, uploading files to the sandbox, running commands inside the sandbox or purging the sandbox after the submission is evaluated.
 
 When creating a submission, the actual thing that happens is that a new sandbox is launched so that the code can be executed inside it. The sandbox is a Docker container that is launched on the Kubernetes cluster. The sandbox is controlled with the \href{https://github.com/kubernetes-client/python}{Python Kubernetes client}. The launched sandbox depends on the type of problem that is being evaluated. This way we can have different types of problems, written in different languages, and with different methods of evaluation and the sandbox will have all the resources needed to evaluate the submission.
 
@@ -512,18 +517,18 @@ The interactions between the checker and other components can be seen in Figure 
 
 
 \subsection{File manager}
-All the files that come to the checker, being them received from the web application or downloaded from the file storage, are stored in a temporary directory. The file manager is responsible for managing the files in this directory. It is responsible for creating the directory, uploading files to the directory, and deleting the directory when the submission is evaluated.
+All the files that come to the checker, being them received from the web application or downloaded from the file storage, are stored in a temporary directory. The file manager is responsible for managing the files in this directory. It is responsible for creating the directory, uploading files to the directory and deleting it when the submission is evaluated.
 
 \subsection{Submission factory}
-The submission factory is responsible for creating the submission object, based on the problem type. The implementation of the submission object is different for each type of problem. It needs to know stuff like what commands to run to build the code, how do the tests look, how to run them and how to compare the results. Currently, the platform only supports one type of problem, but it can be easily extended to support other types of problems.
+The submission factory is responsible for creating the submission object, based on the problem type. The implementation of the submission object is different for each type of problem. It needs to know stuff like what commands to run to build the code, how do the tests look, how to run them and how to compare the results. Currently, the platform only supports one type of problem, but it can be easily extended to support other types as well.
 
 \subsection{Workflow for C++ problems}
 \begin{enumerate}
 	\item The checker receives a new submission from the web application via the API.
 	\item The checker stores the submitted file in a temporary directory.
 	\item Based on the problem type, the checker creates a new submission object.
-	\item The submission object fetches all the necessary files from the file storage.
-	\item The sandbox adapter creates a new sandbox on the Kubernetes cluster.
+	\item The submission object fetches all the necessary files from the S3 file storage.
+	\item The sandbox adapter creates a new sandbox container on the Kubernetes cluster.
 	\item The sandbox adapter uploads all the necessary files to the sandbox.
 	\item The sandbox adapter runs the build command inside the sandbox.
 	\item The sandbox adapter iterates through all the test cases and runs them inside the sandbox.
@@ -533,7 +538,7 @@ The submission factory is responsible for creating the submission object, based 
 
 
 \subsection{Global status object}
-All the submissions are run in a background thread. The status is a global object that is updated by the sandbox adapter as it progresses through the workflow. When the API receives a request for the status of a submission, it returns the status object.
+Each submission is ran in a background thread. The status is a global object that is updated by the sandbox adapter as it progresses through the workflow. When the API receives a request for the status of a submission, it returns the status object.
 
 \section{Sandbox image \href{https://github.com/acadnet-dev/sandbox-cpp}{\faicon{github} Repository}}
 All the sandbox images are running a Python FastAPI server that is used by the sandbox adapter to communicate with the sandbox.
@@ -547,7 +552,7 @@ The endpoints of the FastAPI server are described below.
 \begin{description}
 	\item[Request body]\
 		\begin{itemize}
-			\item \textbf{file} - the file to be uploaded. all the files are uploaded in the same directory
+			\item \textbf{file} - the file to be uploaded; all the files are uploaded in the same directory
 		\end{itemize}
 	\item[Response status]\
 		\begin{itemize}
@@ -772,7 +777,7 @@ The Github Action is ran on every push to the main branch and on every pull requ
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=200px]{./pics/github-actions-workflows.png}
-	\caption{Example of Github Actions workflows}
+	\caption{Example of Github Actions workflows running on multiple ocasions}
 	\label{fig:github-actions-workflows}
 \end{figure}
 
@@ -835,18 +840,17 @@ The submissions are ran separately, which means that the pods will not interfere
 \textbf{Hand-crafted tests}
 Authors are instructed to create tests that are not easily influenced by hardware resource fluctuations. For example, by limiting submission execution time and memory usage, we do not test the performance of the code, but the complexity of the algorithm. This way, the difference in performance between different complexities will be so big that it will not be influenced by the unpredictability of the hardware.
 
-
 \section{Performance and scalability}
 The platform is designed to be scalable and responsive. This means that the platform should be able to handle a large number of users and submissions. Being deployed on a Kubernetes cluster in a cloud environment, the platform can automatically scale up by spinning up new nodes. This comes with the downside of having unpredictable costs, because the number of nodes can change at any time.
 
-The only problem is that spinning a new node takes a few minutes, which means that the user will have to wait a few minutes for the submission to start or for the workspace to open. Because of this, the platform is configured to have at least a free node (buffer node) at any time. This way, the user will not have to wait for the node to spin up. When this buffer node is used, the cluster will automatically spin up a new node.
+The only problem is that spinning a new node takes a few minutes, which means that the user will have to wait a few minutes for the submission to start or for the workspace to open. Because of this, the platform is configured to have at least a free node (buffer node) at any time. This way, the user will not have to wait for the node to spin up. When this buffer node is used, the cluster will automatically spin up a new node to be available for the next scale up.
 
 \section{Security}
 \textbf{Networking}
 The platform is deployed on a DigitalOcean VPC (Virtual Private Cloud). This means that the cluster is not exposed to the internet and it is more secure. The only thing that is exposed to the internet is the web application, which is exposed via a load balancer. The load balancer is configured to only allow traffic on port 80 and 443. The applications are talking between them using their internal IP addresses and ports.
 
 \textbf{Certificates}
-All the exposed endpoints are secured with SSL certificates. The certificates are automatically generated and renewed by Let's Encrypt. The certificates are automatically renewed every 3 months.
+All the exposed endpoints are secured with SSL certificates. The certificates are automatically generated and renewed by Let's Encrypt, every 3 months.
 
 \textbf{Authentication}
 The users can authenticate using their Google account. This is done via the Google OAuth2 authentication provider. This way, the platform does not store any passwords and does not manage forgotten passwords.
@@ -854,58 +858,68 @@ The users can authenticate using their Google account. This is done via the Goog
 \textbf{Authorization}
 The platform has authorization based on user roles. The two roles are for authors and students. All the access is based on the user's journey. Each role's journey is described in Chapter \ref{user-journey}.
 
-\section{Platform testing}
+\section{Testing}
 For testing purposes, the platform has already 6 problems uploaded. These problems are from the 2023 edition of the National Olympiad of Applied Informatics Acadnet. The problems statements are in Romanian and they are implemented using the only developed problem type, C++.
 
-The platform was tested by multiple users. The users were asked to create an account and solve a problem, by uploading the solution and by solving directly in the online workspace. The users were asked to give feedback about the platform. The feedback was mostly positive. The users liked the platform and they found it easy to use. The users also found some bugs and suggested some improvements. The bugs were fixed and the improvements were implemented.
+The platform was tested by multiple users. The users were asked to create an account and solve a problem, by uploading the solution and by solving directly in the online workspace. The users were asked to give feedback about the platform. The feedback was mostly positive. The users liked the platform and they found it easy to use. The users also found some bugs and suggested some improvements. The bugs were fixed and the improvements were added to the \ref{future-work} section.
 
 
 % CONCLUSIONS AND FUTURE WORK
-\chapter{Conclusions and future work}
-\section{Conclusions}
-The platform is a success as it is easy to use and it is scalable. All the planned objectives were achieved. \href{https://acadnet.dev}{AcadNet.dev} will be hosted with the main purpose of being used by highschool students to learn programming and to prepare for the National Olympiad of Applied Informatics.
-
-On the techincal side, there were multiple challanges, starting from selecting which technologies to use and ending with the deployment and maintenance of the platform. Interconnecting all the components was also a challange, because the platform is composed of multiple components written in different technologies. One more thing that was a challange was debugging the Kubernetes pod manager that the checker and the workspace manager use to launch pods on the cluster, because it could be only tested in the production environment.
-
+\chapter{Future work and conclusions}
 \section{Future enhancements}
+\label{future-work}
 \textbf{More problem types}
+\\
 The platform can be extended to support more problem types. Currently, the only supported problem type is C++. The platform can be extended to support other languages like Java, Python, C\#, etc. As it is open-source and it is easy to extend, the platform can be extended by any author that wants to create problems for the platform.
 
 \textbf{Automatical removal of workspaces}
+\\
 The workspaces are currently removed manually by the maintainer. The platform can be extended to automatically remove the workspaces after a period of inactivity. This way resources will be saved and the costs will be reduced.
 
 \textbf{Persistent workspaces}
-The workspaces are currently not persistent. This means that the user will lose all the changes made to the workspace after the workspace is shut down. The platform can be extended to support persistent workspaces. This way, the user will be able to save the workspace and continue working on it later.
+\\
+The workspaces are currently not persistent. This means that the user will lose all the changes made to the workspace after the workspace is shut down. The platform can be extended to support persistent workspaces. This way, the user will be able to save the workspace and continue working on it later. Also, the available space in the workspace can be limited to a certain amount like 100MB. This way, the users will not be able to store large files in the workspace.
 
 \textbf{Contests}
+\\
 The platform can be extended to support contests. This way, the platform can be used to organize contests for highschool students. The contests can be organized by the teachers and the students can participate in the contests. This includes a contest component that allows the teachers to create contests and to add existing problems to the contests. The contests can be open or private. The private contests can be accessed only by the students that are enrolled in the course. There should be a leaderboard and a monitoring component that allows the teachers to see the progress of the students during the contest.
 
 \textbf{Private test results}
-Currently the test results are public. This means that the students can see the test results. Maybe the students should not see the test results, because they can use the test results to cheat. The platform can be extended to support private test results.
+\\
+Currently the test results are public. This means that the students can see the test results. The students may not be able to see the test results, because they can use hardcode the answer.
 
 \textbf{Execution time and memory usage limits}
-Currently, the submissions are not limited in terms of execution time and memory usage. This means that the submissions can run for as long as they want and they can use as much memory as they want. This can be a problem because the submissions can run for a long time and they can use a lot of memory. The platform can be extended to support execution time and memory usage limits. Also, this limit can be used by authors to create tests that check the complexity of the algorithm.
+\\
+At the moment, the submissions are not limited in terms of execution time and memory usage. This means that the submissions can run for as long as they want and they can use as much memory as they want. This can be a problem because the submissions can run for a long time and they can use a lot of memory. The platform can be extended to support execution time and memory usage limits. Also, this limit can be used by authors to create tests that check the complexity of the algorithm.
 
+\textbf{C++ environment in workspaces}
+\\
+Currently, the workspaces are not configured to have a C++ environment. This means that the users cannot compile and run C++ directly in the virtual machine they are running inside. The workspace can have a C++ compiler and extensions for VS Code that allow the user to compile and run C++ directly in the workspace. This extension also provides syntax highlighting and code completion for C++. This can be extended for any implemented problem type.
+
+\textbf{Management of authors}
+\\
+At the moment, the authors are assigned manually by the application administrator, by directly interacting with the database. An admin role can be added to the platform that allows the administrator to manage the authors. This includes adding new authors, removing authors and changing the author's role.
+
+\textbf{Better UI/UX}
+\\
+The platform can be improved in terms of UI/UX. The current state of the UI is only a proof of concept. The UI can be improved to be more user friendly and allow more actions to be done directly from the UI.
+
+\newpage
 \section{Lessons learned}
-Developing a complex project like this one requires a lot of planning. Unfortunately, I only created a bird's eye view of the project and I did not plan the implementation in detail. This led to a lot of research and to a lot of time spent before actually starting the implementation. This also led to a lot of changes in the implementation, because I did not know exactly what I wanted to implement. 
+Developing a complex project like this one requires a lot of planning. Unfortunately, I only created a bird's eye view of the project and I did not plan the implementation in detail. This led to a lot of time spent on research before actually starting the implementation of each component. Multiple functionality changes in the implementation were also caused because the planning was not done in detail. 
 
-Another thing that I learned is that it is very important to have a clear vision of the project. This way, the project can be implemented in a consistent way. This is very important when working with other people, because it is very important to have a consistent code style and to have a consistent architecture. This way, the code is easier to read and to understand by other people.
+Another thing that I learned is that it is very important to have a clear vision of the project from the start. This way, less time is spent refactoring ideas and more time is spent writing quality code.
 
-The last thing that I think had a big impact on writing this thesis is the during the implementation, I created multiple diagrams and I wrote a lot of documentation du. This documentation can be found in the \href{https://github.com/acadnet-dev/docs}{acadnet-dev/docs} repository, together with the diagrams. This documentation helped me a lot when writing this thesis, because I did not have to remember why I implemented the things the way I did. I just had to read the documentation and the diagrams and I remembered everything.
+The last thing that I think had a big impact on writing this thesis is that during the implementation, I created multiple diagrams and I wrote a lot of documentation. This documentation can be found in the \href{https://github.com/acadnet-dev/docs}{acadnet-dev/docs} repository, together with the diagrams. This documentation helped me a lot when writing this thesis, because I did not have to remember why I made certain decisions. I just had to read the documentation and the diagrams and I remembered everything.
 
-Overall, I think that this project was a success and I learned a lot of things from it. I learned a lot of things about the technologies used, how to design the architecture and how to automate the deployment.
+A really frustrating problem I encountered was debugging the Kubernetes pod manager that the checker and the workspace manager use to launch pods on the cluster, because it could be only tested in the production environment.
 
+\section{Conclusions}
+The platform is a success as it is easy to use and it is scalable. All the planned objectives were achieved. \href{https://acadnet.dev}{AcadNet.dev} will be hosted with the main purpose of being used by highschool students to learn programming and to prepare for the National Olympiad of Applied Informatics.
 
-%% O alta varianta ar fi fost includerea de articole direct in acest fisier
-%% in felul urmator:
-% \begin{thebibliography}{ABC}
+On the techincal side, there were multiple challanges, starting from selecting which technologies to use and ending with the deployment and maintenance of the platform. Interconnecting all the components was also a challange, because the platform is composed of multiple components written in different technologies.
 
-% \bibitem{article}
-%  H. Baali, H. Djelouat, A. Amira and F. Bensaali,
-%  ``Empowering Technology Enabled Care Using IoT and Smart Devices:
-%   A Review''. In: IEEE Sensors Journal, vol. 322 (10), pp. 891--921, 1905.
-
-% \end{thebibliography}
+Overall, I think that this project is a success. As it being the project for finishing univeristy, I think I used a lot of knowledge from many courses that I attended during my studies. I also learned a lot of new things from it, like how to plan a complex software architecture, new technologies, CI/CD, Kubernetes and last but not least, how to write a thesis where I can express my ideas and my work.
 
 
 \chapter*{Appendices}\addcontentsline{toc}{chapter}{Appendices}
